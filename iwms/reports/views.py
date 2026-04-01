@@ -10,7 +10,6 @@ class CreateReportView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
-        user = User.objects.first()  # temporary fix
         serializer.save(user=self.request.user)
 
 
@@ -20,12 +19,11 @@ class UserReportsView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        user = User.objects.first()   # ✅ force valid user
-        return WasteReport.objects.filter(user=user)
+        return WasteReport.objects.filter(user=self.request.user)
 
 
 # Admin: View all reports
 class AllReportsView(generics.ListAPIView):
     queryset = WasteReport.objects.all()
     serializer_class = WasteReportSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
