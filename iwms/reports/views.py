@@ -27,3 +27,8 @@ class AllReportsView(generics.ListAPIView):
     queryset = WasteReport.objects.all()
     serializer_class = WasteReportSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class UpdateReportStatusView(generics.UpdateAPIView):
+    queryset = WasteReport.objects.all()
+    serializer_class = WasteReportSerializer
+    permission_classes = [permissions.IsAdminUser]    
