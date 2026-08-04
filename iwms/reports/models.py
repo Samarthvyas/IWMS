@@ -36,5 +36,11 @@ class WasteReport(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    ai_confidence = models.FloatField(
+    blank=True,
+    null=True
+    )
+    
+
     def __str__(self):
         return f"Report {self.id} - {self.user}"
