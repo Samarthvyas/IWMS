@@ -1,0 +1,1071 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | IWMS{% endblock %}
+
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5f7f6;
+    }
+
+    .dashboard-wrapper {
+        margin-top: -48px;
+        margin-left: -12px;
+        margin-right: -12px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+        min-height: calc(100vh - 70px);
+        background: linear-gradient(
+            180deg,
+            #064d32,
+            #073d2b
+        );
+        color: white;
+    }
+
+    .sidebar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-section {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        color: #146c43;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-link {
+        display: block;
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        padding: 12px 20px;
+        margin: 3px 10px;
+        border-radius: 7px;
+        transition: 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        background-color: rgba(255,255,255,0.14);
+        color: white;
+    }
+
+    .dashboard-content {
+        padding: 30px;
+    }
+
+    .welcome-box {
+        background: linear-gradient(
+            135deg,
+            #e4f3ff,
+            #d9efff
+        );
+        border-radius: 10px;
+        padding: 22px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+
+    .stat-number {
+        font-size: 1.7rem;
+        font-weight: 700;
+    }
+
+    .stat-link {
+        font-size: 0.8rem;
+        text-decoration: none;
+    }
+
+    .recent-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .report-image {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .status-badge {
+        font-size: 0.72rem;
+        padding: 5px 8px;
+    }
+
+    @media (max-width: 768px) {
+
+        .sidebar {
+            min-height: auto;
+        }
+
+        .dashboard-content {
+            padding: 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="dashboard-wrapper">
+
+    <div class="row g-0">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <div class="col-lg-2">
+
+            <aside class="sidebar">
+
+                <div class="sidebar-brand">
+                    ♻️ IWMS
+                </div>
+
+
+                <!-- Profile -->
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        👤
+                    </div>
+
+                    <div class="fw-semibold"
+                         id="sidebar-username">
+                        Citizen
+                    </div>
+
+                    <small class="text-white-50">
+                        Citizen
+                    </small>
+
+                </div>
+
+
+                <!-- Navigation -->
+
+                <nav class="mt-3">
+
+                    <a href="{% url 'frontend_dashboard' %}"
+                       class="sidebar-link active">
+
+                        🏠
+                        <span class="ms-2">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+
+                    <a href="{% url 'frontend_report_waste' %}"
+                       class="sidebar-link">
+
+                        ♻️
+                        <span class="ms-2">
+                            Report Waste
+                        </span>
+
+                    </a>
+
+
+                    <a href="{% url 'frontend_my_reports' %}"
+                       class="sidebar-link">
+
+                        📋
+                        <span class="ms-2">
+                            My Reports
+                        </span>
+
+                    </a>
+
+
+                    <a href="#"
+                       class="sidebar-link">
+
+                        👤
+                        <span class="ms-2">
+                            Profile
+                        </span>
+
+                    </a>
+
+                    <a href="{% url 'frontend_admin_dashboard' %}"
+                    class="sidebar-link">
+
+                        🛠️
+                    <span class="ms-2">
+                    Admin
+                    </span>
+
+                    </a>
+
+
+                    <a href="#"
+                       class="sidebar-link"
+                       id="logout-link">
+
+                        🚪
+                        <span class="ms-2">
+                            Logout
+                        </span>
+
+                    </a>
+
+                </nav>
+
+            </aside>
+
+        </div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <div class="col-lg-10">
+
+            <main class="dashboard-content">
+
+                <h4 class="fw-bold mb-3">
+                    Dashboard
+                </h4>
+
+
+                <!-- Welcome -->
+
+                <div class="welcome-box">
+
+                    <h5 class="fw-bold mb-1">
+                        Welcome back,
+                        <span id="welcome-username">
+                            Citizen
+                        </span>
+                        👋
+                    </h5>
+
+                    <p class="mb-0 text-muted">
+                        Thank you for helping us keep
+                        our environment clean.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= STAT CARDS ================= -->
+
+                <div class="row g-3 mb-4">
+
+                    <!-- Total -->
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Total Reports
+                                </small>
+
+                                <div
+                                    class="stat-number text-primary"
+                                    id="total-reports">
+                                    0
+                                </div>
+
+                                <a href="#"
+                                   class="stat-link text-primary">
+                                    View all
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Pending -->
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Pending
+                                </small>
+
+                                <div
+                                    class="stat-number text-warning"
+                                    id="pending-reports">
+                                    0
+                                </div>
+
+                                <a href="#"
+                                   class="stat-link text-warning">
+                                    View all
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- In Progress -->
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    In Progress
+                                </small>
+
+                                <div
+                                    class="stat-number text-info"
+                                    id="progress-reports">
+                                    0
+                                </div>
+
+                                <a href="#"
+                                   class="stat-link text-info">
+                                    View all
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Resolved -->
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Resolved
+                                </small>
+
+                                <div
+                                    class="stat-number text-success"
+                                    id="resolved-reports">
+                                    0
+                                </div>
+
+                                <a href="#"
+                                   class="stat-link text-success">
+                                    View all
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= RECENT REPORTS ================= -->
+
+                <div class="card recent-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center
+                                    mb-3">
+
+                            <h5 class="fw-bold mb-0">
+                                Recent Reports
+                            </h5>
+
+                            <span
+                                id="reports-loading"
+                                class="text-muted small">
+                            </span>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table
+                                          table-hover
+                                          align-middle">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>ID</th>
+                                        <th>Image</th>
+                                        <th>Location</th>
+                                        <th>Waste Type</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Date</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="reports-table-body">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="7"
+                                            class="text-center text-muted py-4">
+
+                                            Loading reports...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div class="text-center mt-3">
+
+                            <a href="{% url 'frontend_my_reports' %}"
+                               class="btn btn-success btn-sm">
+                                View All Reports
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   GET JWT ACCESS TOKEN
+   ============================================================ */
+
+const accessToken =
+    localStorage.getItem("access_token");
+
+
+/* ============================================================
+   CHECK LOGIN
+   ============================================================ */
+
+if (!accessToken) {
+
+    window.location.href =
+        "{% url 'frontend_login' %}";
+
+}
+
+
+/* ============================================================
+   GET USERNAME
+   ============================================================ */
+
+const savedUsername =
+    localStorage.getItem("username");
+
+
+if (savedUsername) {
+
+    document.getElementById(
+        "welcome-username"
+    ).textContent = savedUsername;
+
+    document.getElementById(
+        "sidebar-username"
+    ).textContent = savedUsername;
+
+}
+
+
+/* ============================================================
+   LOAD REPORTS
+   ============================================================ */
+
+async function loadDashboard() {
+
+    const tableBody =
+        document.getElementById(
+            "reports-table-body"
+        );
+
+    const loading =
+        document.getElementById(
+            "reports-loading"
+        );
+
+
+    loading.textContent =
+        "Loading...";
+
+
+    try {
+
+        const response = await fetch(
+            "/api/reports/my-reports/",
+            {
+                method: "GET",
+
+                headers: {
+                    "Authorization":
+                        "Bearer " + accessToken
+                }
+            }
+        );
+
+
+        if (response.status === 401) {
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "refresh_token"
+            );
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load reports."
+            );
+
+        }
+
+
+        const reports =
+            await response.json();
+
+
+        /*
+         * DRF may return either:
+         *
+         * [
+         *   {...},
+         *   {...}
+         * ]
+         *
+         * or:
+         *
+         * {
+         *   "results": [...]
+         * }
+         */
+
+        const reportList =
+            Array.isArray(reports)
+                ? reports
+                : reports.results || [];
+
+
+        updateStatistics(reportList);
+
+        displayReports(reportList);
+
+
+        loading.textContent = "";
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        loading.textContent = "";
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="7"
+                    class="text-center text-danger py-4">
+
+                    Unable to load reports.
+                    Please try again.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================================================
+   UPDATE STATISTICS
+   ============================================================ */
+
+function updateStatistics(reports) {
+
+    const total =
+        reports.length;
+
+
+    const pending =
+        reports.filter(
+            report =>
+                report.status === "pending"
+        ).length;
+
+
+    const inProgress =
+        reports.filter(
+            report =>
+                report.status === "in_progress"
+        ).length;
+
+
+    const resolved =
+        reports.filter(
+            report =>
+                report.status === "resolved"
+        ).length;
+
+
+    document.getElementById(
+        "total-reports"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "pending-reports"
+    ).textContent = pending;
+
+
+    document.getElementById(
+        "progress-reports"
+    ).textContent = inProgress;
+
+
+    document.getElementById(
+        "resolved-reports"
+    ).textContent = resolved;
+
+}
+
+
+/* ============================================================
+   DISPLAY REPORTS
+   ============================================================ */
+
+function displayReports(reports) {
+
+    const tableBody =
+        document.getElementById(
+            "reports-table-body"
+        );
+
+
+    if (reports.length === 0) {
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="7"
+                    class="text-center text-muted py-5">
+
+                    <div class="fs-2 mb-2">
+                        ♻️
+                    </div>
+
+                    No reports yet.
+
+                    <br>
+
+                    <small>
+                        Submit your first waste report
+                        to get started.
+                    </small>
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * Show only the latest 5 reports.
+     */
+
+    const recentReports =
+        reports.slice(0, 5);
+
+
+    tableBody.innerHTML =
+        recentReports.map(
+            report => {
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            #${report.id}
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                report.image
+                                ?
+                                `
+                                <img
+                                    src="${report.image}"
+                                    class="report-image"
+                                    alt="Waste"
+                                >
+                                `
+                                :
+                                `
+                                <span>
+                                    —
+                                </span>
+                                `
+                            }
+
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                report.location || "—"
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${formatWasteType(
+                                report.waste_type
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${formatStatus(
+                                report.status
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${formatPriority(
+                                report.priority
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${formatDate(
+                                report.created_at
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* ============================================================
+   FORMAT STATUS
+   ============================================================ */
+
+function formatStatus(status) {
+
+    const statusMap = {
+
+        pending: {
+            text: "Pending",
+            class: "bg-warning text-dark"
+        },
+
+        in_progress: {
+            text: "In Progress",
+            class: "bg-info text-dark"
+        },
+
+        resolved: {
+            text: "Resolved",
+            class: "bg-success"
+        }
+
+    };
+
+
+    const item =
+        statusMap[status] || {
+
+            text: status || "Unknown",
+
+            class: "bg-secondary"
+
+        };
+
+
+    return `
+        <span class="badge ${item.class} status-badge">
+            ${item.text}
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   FORMAT PRIORITY
+   ============================================================ */
+
+function formatPriority(priority) {
+
+    if (!priority) {
+
+        return "—";
+
+    }
+
+
+    const priorityMap = {
+
+        low: {
+            text: "Low",
+            class: "bg-success"
+        },
+
+        medium: {
+            text: "Medium",
+            class: "bg-warning text-dark"
+        },
+
+        high: {
+            text: "High",
+            class: "bg-danger"
+        }
+
+    };
+
+
+    const item =
+        priorityMap[priority] || {
+
+            text: priority,
+
+            class: "bg-secondary"
+
+        };
+
+
+    return `
+        <span class="badge ${item.class}">
+            ${item.text}
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   FORMAT WASTE TYPE
+   ============================================================ */
+
+function formatWasteType(type) {
+
+    if (!type) {
+
+        return "—";
+
+    }
+
+
+    return type
+        .replace("_", " ")
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+
+}
+
+
+/* ============================================================
+   FORMAT DATE
+   ============================================================ */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+
+        return "—";
+
+    }
+
+
+    const date =
+        new Date(dateString);
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   BASIC HTML ESCAPING
+   ============================================================ */
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value;
+
+    return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+document
+    .getElementById("logout-link")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "refresh_token"
+            );
+
+            localStorage.removeItem(
+                "username"
+            );
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+        }
+    );
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+if (accessToken) {
+
+    loadDashboard();
+
+}
+
+</script>
+<script>
+
+document.getElementById("logout-link").addEventListener("click", function(event) {
+
+    event.preventDefault();
+
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+
+    window.location.href = "{% url 'frontend_login' %}";
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,929 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | IWMS{% endblock %}
+
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5f7f6;
+    }
+
+    .admin-wrapper {
+        margin-top: -48px;
+        margin-left: -12px;
+        margin-right: -12px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+        min-height: calc(100vh - 70px);
+        background: #212529;
+        color: white;
+    }
+
+    .sidebar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-section {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        color: #212529;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-link {
+        display: block;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        padding: 12px 20px;
+        margin: 3px 10px;
+        border-radius: 7px;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        background-color: rgba(255,255,255,0.12);
+        color: white;
+    }
+
+    .admin-content {
+        padding: 30px;
+    }
+
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .reports-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+
+        .sidebar {
+            min-height: auto;
+        }
+
+        .admin-content {
+            padding: 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="admin-wrapper">
+
+    <div class="row g-0">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <div class="col-lg-2">
+
+            <aside class="sidebar">
+
+                <div class="sidebar-brand">
+                    ♻️ IWMS
+                </div>
+
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        👨‍💼
+                    </div>
+
+                    <div
+                        class="fw-semibold"
+                        id="admin-username">
+
+                        Admin
+
+                    </div>
+
+                    <small class="text-white-50">
+                        Administrator
+                    </small>
+
+                </div>
+
+
+                <nav class="mt-3">
+
+                    <a
+                        href="{% url 'frontend_admin_dashboard' %}"
+                        class="sidebar-link active">
+
+                        🏠
+                        <span class="ms-2">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'frontend_all_reports' %}"
+                        class="sidebar-link">
+
+                        📋
+                        <span class="ms-2">
+                            All Reports
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{% url 'frontend_users' %}"
+                        class="sidebar-link">
+
+                        👥
+                        <span class="ms-2">
+                            Users
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="sidebar-link"
+                        id="logout-link">
+
+                        🚪
+                        <span class="ms-2">
+                            Logout
+                        </span>
+
+                    </a>
+
+                </nav>
+
+            </aside>
+
+        </div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <div class="col-lg-10">
+
+            <main class="admin-content">
+
+                <div class="mb-4">
+
+                    <h4 class="fw-bold mb-1">
+                        Admin Dashboard
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Monitor and manage waste reports.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= MESSAGE ================= -->
+
+                <div id="message-container"></div>
+
+
+                <!-- ================= STAT CARDS ================= -->
+
+                <div class="row g-3 mb-4">
+
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Total Reports
+                                </small>
+
+                                <div
+                                    class="stat-number text-primary"
+                                    id="total-reports">
+
+                                    0
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Pending
+                                </small>
+
+                                <div
+                                    class="stat-number text-warning"
+                                    id="pending-reports">
+
+                                    0
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    In Progress
+                                </small>
+
+                                <div
+                                    class="stat-number text-info"
+                                    id="progress-reports">
+
+                                    0
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 col-xl-3">
+
+                        <div class="card stat-card">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+                                    Resolved
+                                </small>
+
+                                <div
+                                    class="stat-number text-success"
+                                    id="resolved-reports">
+
+                                    0
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= RECENT REPORTS ================= -->
+
+                <div class="card reports-card">
+
+                    <div class="card-body">
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   mb-3">
+
+                            <h5 class="fw-bold mb-0">
+                                Recent Reports
+                            </h5>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table
+                                class="table
+                                       table-hover
+                                       align-middle">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>ID</th>
+                                        <th>Citizen</th>
+                                        <th>Location</th>
+                                        <th>Waste Type</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Date</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="reports-table-body">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="7"
+                                            class="text-center
+                                                   text-muted
+                                                   py-5">
+
+                                            Loading reports...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   AUTHENTICATION
+   ============================================================ */
+
+const accessToken =
+    localStorage.getItem("access_token");
+
+
+if (!accessToken) {
+
+    window.location.href =
+        "{% url 'frontend_login' %}";
+
+}
+
+
+/* ============================================================
+   USERNAME
+   ============================================================ */
+
+const savedUsername =
+    localStorage.getItem("username");
+
+
+if (savedUsername) {
+
+    document.getElementById(
+        "admin-username"
+    ).textContent = savedUsername;
+
+}
+
+
+/* ============================================================
+   LOAD ALL REPORTS
+   ============================================================ */
+
+async function loadReports() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/reports/all-reports/",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + accessToken
+                    }
+                }
+            );
+
+
+        /* ---------------------------------------------
+           Unauthorized
+        --------------------------------------------- */
+
+        if (response.status === 401) {
+
+            localStorage.clear();
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           Forbidden
+        --------------------------------------------- */
+
+        if (response.status === 403) {
+
+            showMessage(
+                "You do not have permission to access the admin dashboard.",
+                "danger"
+            );
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load reports"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+         * DRF can return either:
+         *
+         * [...]
+         *
+         * or
+         *
+         * {
+         *     "results": [...]
+         * }
+         */
+
+        const reports =
+            Array.isArray(data)
+                ? data
+                : (data.results || []);
+
+
+        updateStatistics(reports);
+
+        displayRecentReports(reports);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load reports from the server.",
+            "danger"
+        );
+
+        document.getElementById(
+            "reports-table-body"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="text-center text-danger py-5">
+
+                    Failed to load reports.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================================================
+   UPDATE STATISTICS
+   ============================================================ */
+
+function updateStatistics(reports) {
+
+    document.getElementById(
+        "total-reports"
+    ).textContent =
+        reports.length;
+
+
+    document.getElementById(
+        "pending-reports"
+    ).textContent =
+        reports.filter(
+            report =>
+                report.status === "pending"
+        ).length;
+
+
+    document.getElementById(
+        "progress-reports"
+    ).textContent =
+        reports.filter(
+            report =>
+                report.status === "in_progress"
+        ).length;
+
+
+    document.getElementById(
+        "resolved-reports"
+    ).textContent =
+        reports.filter(
+            report =>
+                report.status === "resolved"
+        ).length;
+
+}
+
+
+/* ============================================================
+   DISPLAY RECENT REPORTS
+   ============================================================ */
+
+function displayRecentReports(reports) {
+
+    const tbody =
+        document.getElementById(
+            "reports-table-body"
+        );
+
+
+    if (reports.length === 0) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="text-center
+                           text-muted
+                           py-5">
+
+                    No reports available.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * Backend orders reports by creation time only
+     * if queryset is ordered.
+     *
+     * For now display first 5 returned reports.
+     */
+
+    const recentReports =
+        reports.slice(0, 5);
+
+
+    tbody.innerHTML =
+        recentReports.map(
+            report => `
+
+                <tr>
+
+                    <td>
+                        #${report.id}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            report.username ||
+                            report.user_username ||
+                            "Citizen"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            report.location || "—"
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatWasteType(
+                            report.waste_type
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatStatus(
+                            report.status
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatPriority(
+                            report.priority
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            report.created_at
+                        )}
+                    </td>
+
+                </tr>
+
+            `
+        ).join("");
+
+}
+
+
+/* ============================================================
+   WASTE TYPE
+   ============================================================ */
+
+function formatWasteType(type) {
+
+    if (!type) {
+        return "—";
+    }
+
+
+    return type
+        .replaceAll("_", " ")
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+
+}
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+function formatStatus(status) {
+
+    const statusMap = {
+
+        pending: {
+            text: "Pending",
+            className: "bg-warning text-dark"
+        },
+
+        in_progress: {
+            text: "In Progress",
+            className: "bg-info text-dark"
+        },
+
+        resolved: {
+            text: "Resolved",
+            className: "bg-success"
+        }
+
+    };
+
+
+    const item =
+        statusMap[status] || {
+
+            text: status || "Unknown",
+            className: "bg-secondary"
+
+        };
+
+
+    return `
+        <span class="badge ${item.className}">
+            ${item.text}
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   PRIORITY
+   ============================================================ */
+
+function formatPriority(priority) {
+
+    const priorityMap = {
+
+        low: {
+            text: "Low",
+            className: "bg-success"
+        },
+
+        medium: {
+            text: "Medium",
+            className: "bg-warning text-dark"
+        },
+
+        high: {
+            text: "High",
+            className: "bg-danger"
+        }
+
+    };
+
+
+    const item =
+        priorityMap[priority] || {
+
+            text: priority || "Unknown",
+            className: "bg-secondary"
+
+        };
+
+
+    return `
+        <span class="badge ${item.className}">
+            ${item.text}
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   DATE
+   ============================================================ */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "—";
+    }
+
+
+    return new Date(
+        dateString
+    ).toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   HTML ESCAPE
+   ============================================================ */
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value;
+
+    return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   MESSAGE
+   ============================================================ */
+
+function showMessage(
+    message,
+    type
+) {
+
+    document.getElementById(
+        "message-container"
+    ).innerHTML = `
+
+        <div
+            class="alert alert-${type}
+                   alert-dismissible fade show">
+
+            ${message}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+document
+    .getElementById("logout-link")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            localStorage.clear();
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+        }
+    );
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+if (accessToken) {
+
+    loadReports();
+
+}
+
+</script>
+
+{% endblock %}

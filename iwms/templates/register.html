@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+
+{% block title %}Register | IWMS{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center align-items-center"
+     style="min-height: 75vh;">
+
+    <!-- Register Form -->
+    <div class="col-lg-5 col-md-7">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+
+                    <div class="fs-1">
+                        ♻️
+                    </div>
+
+                    <h2 class="fw-bold">
+                        Create Account
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Register as a citizen to report waste
+                    </p>
+
+                </div>
+
+
+                <!-- Error / Success Messages -->
+
+                <div id="message-container"></div>
+
+
+                <form id="register-form">
+
+                    <!-- Username -->
+
+                    <div class="mb-3">
+
+                        <label for="username"
+                               class="form-label fw-semibold">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="username"
+                            name="username"
+                            placeholder="Enter username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="mb-3">
+
+                        <label for="email"
+                               class="form-label fw-semibold">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="Enter email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Password -->
+
+                    <div class="mb-3">
+
+                        <label for="password"
+                               class="form-label fw-semibold">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Enter password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Confirm Password -->
+
+                    <div class="mb-3">
+
+                        <label for="confirm-password"
+                               class="form-label fw-semibold">
+                            Confirm Password
+                        </label>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="confirm-password"
+                            name="confirm_password"
+                            placeholder="Confirm password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Role -->
+
+                    <div class="mb-4">
+
+                        <label for="role"
+                               class="form-label fw-semibold">
+                            Role
+                        </label>
+
+                        <select
+                        class="form-select"
+                        id="role"
+                        name="role"
+                        >
+                        <option value="citizen" selected>
+                        Citizen
+                        </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- Register Button -->
+
+                    <button
+                        type="submit"
+                        id="register-button"
+                        class="btn btn-success w-100"
+                    >
+                        Register
+                    </button>
+
+                </form>
+
+
+                <!-- Login Link -->
+
+                <div class="text-center mt-4">
+
+                    <small class="text-muted">
+                        Already have an account?
+                    </small>
+
+                    <a href="{% url 'frontend_login' %}"
+                       class="text-success fw-semibold text-decoration-none">
+                        Login here
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Illustration -->
+
+    <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+
+        <div class="text-center">
+
+            <div style="font-size: 150px;">
+                🗑️
+            </div>
+
+            <h4 class="fw-bold text-success">
+                Keep Your Environment Clean
+            </h4>
+
+            <p class="text-muted">
+                Join IWMS and help us build a cleaner
+                and smarter environment.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document
+    .getElementById("register-form")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        const username =
+            document.getElementById("username").value.trim();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const confirmPassword =
+            document.getElementById("confirm-password").value;
+
+        const role =
+            document.getElementById("role").value;
+
+
+        const messageContainer =
+            document.getElementById("message-container");
+
+        const registerButton =
+            document.getElementById("register-button");
+
+
+        // Clear previous message
+
+        messageContainer.innerHTML = "";
+
+
+        // Check passwords
+
+        if (password !== confirmPassword) {
+
+            messageContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    Passwords do not match.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // Disable button
+
+        registerButton.disabled = true;
+
+        registerButton.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2">
+            </span>
+            Registering...
+        `;
+
+
+        try {
+
+            const response = await fetch(
+                "/api/users/register/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password,
+                        role: role
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (response.ok) {
+
+                messageContainer.innerHTML = `
+                    <div class="alert alert-success">
+                        Registration successful!
+                        Redirecting to login...
+                    </div>
+                `;
+
+
+                setTimeout(function() {
+
+                    window.location.href =
+                        "{% url 'frontend_login' %}";
+
+                }, 1500);
+
+
+            } else {
+
+                let errorMessage =
+                    "Registration failed. Please check your details.";
+
+
+                if (data.username) {
+                    errorMessage = data.username[0];
+                }
+
+                else if (data.email) {
+                    errorMessage = data.email[0];
+                }
+
+                else if (data.password) {
+                    errorMessage = data.password[0];
+                }
+
+                else if (data.role) {
+                    errorMessage = data.role[0];
+                }
+
+
+                messageContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${errorMessage}
+                    </div>
+                `;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            messageContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    Unable to connect to the server.
+                    Please try again.
+                </div>
+            `;
+
+        }
+
+
+        // Enable button again
+
+        registerButton.disabled = false;
+
+        registerButton.innerHTML = "Register";
+
+    });
+
+</script>
+
+{% endblock %}

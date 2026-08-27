@@ -6,4 +6,5 @@ urlpatterns = [
     path('my-reports/', UserReportsView.as_view()),
     path('all-reports/', AllReportsView.as_view()),
     path('update/<int:pk>/', UpdateReportStatusView.as_view()),
+    
 ]

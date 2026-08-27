@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-5">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4">
+
+                <h2 class="text-center text-success fw-bold mb-4">
+                    Login
+                </h2>
+
+                <!-- Error message -->
+                <div id="errorMessage"
+                     class="alert alert-danger d-none">
+                </div>
+
+                <form id="loginForm">
+
+                    <!-- Username -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            id="username"
+                            class="form-control"
+                            placeholder="Enter username"
+                            required
+                        >
+
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            class="form-control"
+                            placeholder="Enter password"
+                            required
+                        >
+
+                    </div>
+
+                    <!-- Login Button -->
+                    <div class="d-grid">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+                            Login
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <p class="text-center mt-4 mb-0">
+
+                    Don't have an account?
+
+                    <a href="{% url 'frontend_register' %}" class="text-success">
+                        Register
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("/api/users/login/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+
+    })
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Invalid username or password");
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        // Save JWT tokens
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+
+        // Login successful
+        window.location.href = "{% url 'frontend_dashboard' %}";
+
+    })
+
+    .catch(error => {
+
+        const errorMessage =
+            document.getElementById("errorMessage");
+
+        errorMessage.textContent = error.message;
+
+        errorMessage.classList.remove("d-none");
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

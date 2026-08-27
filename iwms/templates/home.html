@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="text-center py-5">
+
+    <h1 class="display-3 fw-bold text-success">
+        Intelligent Waste Management System
+    </h1>
+
+    <p class="lead mt-4">
+        Report waste using AI-powered image classification
+        and help keep your city clean.
+    </p>
+
+    <div class="mt-4">
+
+        <a href="{% url 'frontend_login' %}" class="btn btn-success btn-lg me-3">
+            Report Waste
+        </a>
+
+        <a href="#features" class="btn btn-outline-success btn-lg">
+            Learn More
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+
+    <h2 class="text-center fw-bold mb-5">
+        Our Features
+    </h2>
+
+    <div class="row g-4">
+
+        <!-- Feature 1 -->
+        <div class="col-md-3">
+
+            <div class="card h-100 shadow-sm text-center p-4 ">
+
+                <div class="display-4 mb-3">
+                    📷
+                </div>
+
+                <h4>Report Waste</h4>
+
+                <p class="text-muted">
+                    Upload an image of waste along with its location
+                    to create a waste report.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Feature 2 -->
+        <div class="col-md-3">
+
+            <div class="card h-100 shadow-sm text-center p-4">
+
+                <div class="display-4 mb-3">
+                    🤖
+                </div>
+
+                <h4>AI Classification</h4>
+
+                <p class="text-muted">
+                    Our AI model automatically identifies waste as
+                    Dry, Wet, or Hazardous.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Feature 3 -->
+        <div class="col-md-3">
+
+            <div class="card h-100 shadow-sm text-center p-4">
+
+                <div class="display-4 mb-3">
+                    📍
+                </div>
+
+                <h4>Location Tracking</h4>
+
+                <p class="text-muted">
+                    Store the location of reported waste to help
+                    administrators manage collection.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Feature 4 -->
+        <div class="col-md-3">
+
+            <div class="card h-100 shadow-sm text-center p-4">
+
+                <div class="display-4 mb-3">
+                    📊
+                </div>
+
+                <h4>Status Tracking</h4>
+
+                <p class="text-muted">
+                    Track your report from Pending to In Progress
+                    and finally Resolved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+
+    <h2 class="text-center fw-bold mb-5">
+        How It Works
+    </h2>
+
+    <div class="row g-4 text-center">
+
+        <!-- Step 1 -->
+        <div class="col-md-3">
+
+            <div class="p-4">
+
+                <div class="display-4 mb-3">
+                    1️⃣
+                </div>
+
+                <h4>Report Waste</h4>
+
+                <p class="text-muted">
+                    A citizen uploads an image of the waste
+                    and provides its location.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Step 2 -->
+        <div class="col-md-3">
+
+            <div class="p-4">
+
+                <div class="display-4 mb-3">
+                    2️⃣
+                </div>
+
+                <h4>AI Analysis</h4>
+
+                <p class="text-muted">
+                    Our AI model analyzes the image and
+                    classifies the waste.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Step 3 -->
+        <div class="col-md-3">
+
+            <div class="p-4">
+
+                <div class="display-4 mb-3">
+                    3️⃣
+                </div>
+
+                <h4>Priority Assignment</h4>
+
+                <p class="text-muted">
+                    The system automatically assigns a
+                    priority based on the waste type.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Step 4 -->
+        <div class="col-md-3">
+
+            <div class="p-4">
+
+                <div class="display-4 mb-3">
+                    4️⃣
+                </div>
+
+                <h4>Waste Collection</h4>
+
+                <p class="text-muted">
+                    Administrators manage the report and
+                    update its status until resolved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Call To Action -->
+<section class="bg-success text-white text-center rounded p-5 my-5">
+
+    <h2 class="fw-bold">
+        Help Keep Your City Clean
+    </h2>
+
+    <p class="lead mt-3">
+        Report waste and let our intelligent system help
+        manage it efficiently.
+    </p>
+
+    <a href="{% url 'frontend_login' %}" class="btn btn-light btn-lg mt-3">
+        Report Waste
+    </a>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,1066 @@
+{% extends 'base.html' %}
+
+{% block title %}My Reports | IWMS{% endblock %}
+
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5f7f6;
+    }
+
+    .reports-wrapper {
+        margin-top: -48px;
+        margin-left: -12px;
+        margin-right: -12px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+        min-height: calc(100vh - 70px);
+        background: linear-gradient(
+            180deg,
+            #064d32,
+            #073d2b
+        );
+        color: white;
+    }
+
+    .sidebar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-section {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        color: #146c43;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-link {
+        display: block;
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        padding: 12px 20px;
+        margin: 3px 10px;
+        border-radius: 7px;
+        transition: 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        background-color: rgba(255,255,255,0.14);
+        color: white;
+    }
+
+    .reports-content {
+        padding: 30px;
+    }
+
+    .reports-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .report-image {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 7px;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 6px 9px;
+    }
+
+    .filter-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
+
+        .sidebar {
+            min-height: auto;
+        }
+
+        .reports-content {
+            padding: 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="reports-wrapper">
+
+    <div class="row g-0">
+
+        <!-- SIDEBAR -->
+
+        <div class="col-lg-2">
+
+            <aside class="sidebar">
+
+                <div class="sidebar-brand">
+                    ♻️ IWMS
+                </div>
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        👤
+                    </div>
+
+                    <div
+                        class="fw-semibold"
+                        id="sidebar-username">
+                        Citizen
+                    </div>
+
+                    <small class="text-white-50">
+                        Citizen
+                    </small>
+
+                </div>
+
+                <nav class="mt-3">
+
+                    <a
+                        href="{% url 'frontend_dashboard' %}"
+                        class="sidebar-link">
+
+                        🏠
+                        <span class="ms-2">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="{% url 'frontend_report_waste' %}"
+                        class="sidebar-link">
+
+                        ♻️
+                        <span class="ms-2">
+                            Report Waste
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="{% url 'frontend_my_reports' %}"
+                        class="sidebar-link active">
+
+                        📋
+                        <span class="ms-2">
+                            My Reports
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="#"
+                        class="sidebar-link">
+
+                        👤
+                        <span class="ms-2">
+                            Profile
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="#"
+                        class="sidebar-link"
+                        id="logout-link">
+
+                        🚪
+                        <span class="ms-2">
+                            Logout
+                        </span>
+
+                    </a>
+
+                </nav>
+
+            </aside>
+
+        </div>
+
+
+        <!-- MAIN CONTENT -->
+
+        <div class="col-lg-10">
+
+            <main class="reports-content">
+
+                <div
+                    class="d-flex
+                           justify-content-between
+                           align-items-center
+                           mb-4">
+
+                    <div>
+
+                        <h4 class="fw-bold mb-1">
+                            My Reports
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            View and track your submitted
+                            waste reports.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{% url 'frontend_report_waste' %}"
+                        class="btn btn-success">
+
+                        + Report Waste
+
+                    </a>
+
+                </div>
+
+
+                <!-- FILTERS -->
+
+                <div class="card filter-card mb-4">
+
+                    <div class="card-body">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+
+                                <label
+                                    class="form-label small fw-semibold">
+
+                                    Status
+
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="status-filter">
+
+                                    <option value="">
+                                        All Status
+                                    </option>
+
+                                    <option value="pending">
+                                        Pending
+                                    </option>
+
+                                    <option value="in_progress">
+                                        In Progress
+                                    </option>
+
+                                    <option value="resolved">
+                                        Resolved
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label
+                                    class="form-label small fw-semibold">
+
+                                    Waste Type
+
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="waste-type-filter">
+
+                                    <option value="">
+                                        All Waste Types
+                                    </option>
+
+                                    <option value="plastic">
+                                        Plastic
+                                    </option>
+
+                                    <option value="paper">
+                                        Paper
+                                    </option>
+
+                                    <option value="glass">
+                                        Glass
+                                    </option>
+
+                                    <option value="metal">
+                                        Metal
+                                    </option>
+
+                                    <option value="organic">
+                                        Organic
+                                    </option>
+
+                                    <option value="e_waste">
+                                        E-Waste
+                                    </option>
+
+                                    <option value="hazardous">
+                                        Hazardous
+                                    </option>
+
+                                    <option value="textile">
+                                        Textile
+                                    </option>
+
+                                    <option value="other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label
+                                    class="form-label small fw-semibold">
+
+                                    Priority
+
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="priority-filter">
+
+                                    <option value="">
+                                        All Priorities
+                                    </option>
+
+                                    <option value="low">
+                                        Low
+                                    </option>
+
+                                    <option value="medium">
+                                        Medium
+                                    </option>
+
+                                    <option value="high">
+                                        High
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div id="message-container"></div>
+
+
+                <!-- REPORTS -->
+
+                <div class="card reports-card">
+
+                    <div class="card-body">
+
+                        <div
+                            class="d-flex
+                                   justify-content-between
+                                   align-items-center
+                                   mb-3">
+
+                            <h5 class="fw-bold mb-0">
+                                Submitted Reports
+                            </h5>
+
+                            <span
+                                id="report-count"
+                                class="text-muted small">
+                            </span>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table
+                                class="table
+                                       table-hover
+                                       align-middle">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>ID</th>
+
+                                        <th>Image</th>
+
+                                        <th>Location</th>
+
+                                        <th>Waste Type</th>
+
+                                        <th>AI Confidence</th>
+
+                                        <th>Status</th>
+
+                                        <th>Priority</th>
+
+                                        <th>Date</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody
+                                    id="reports-table-body">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="8"
+                                            class="text-center
+                                                   text-muted
+                                                   py-5">
+
+                                            Loading reports...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+
+const accessToken =
+    localStorage.getItem("access_token");
+
+
+if (!accessToken) {
+
+    window.location.href =
+        "{% url 'frontend_login' %}";
+
+}
+
+
+/* ============================================================
+   USERNAME
+   ============================================================ */
+
+const savedUsername =
+    localStorage.getItem("username");
+
+
+if (savedUsername) {
+
+    document.getElementById(
+        "sidebar-username"
+    ).textContent = savedUsername;
+
+}
+
+
+/* ============================================================
+   DATA
+   ============================================================ */
+
+let allReports = [];
+
+
+/* ============================================================
+   LOAD REPORTS
+   ============================================================ */
+
+async function loadReports() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/reports/my-reports/",
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " +
+                            accessToken
+
+                    }
+
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            localStorage.clear();
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load reports."
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        allReports =
+            Array.isArray(data)
+                ? data
+                : data.results || [];
+
+
+        applyFilters();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "reports-table-body"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="text-center
+                           text-danger
+                           py-5">
+
+                    Unable to load reports.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+
+document
+    .getElementById("status-filter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+document
+    .getElementById("waste-type-filter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+document
+    .getElementById("priority-filter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+function applyFilters() {
+
+    const status =
+        document.getElementById(
+            "status-filter"
+        ).value;
+
+
+    const wasteType =
+        document.getElementById(
+            "waste-type-filter"
+        ).value;
+
+
+    const priority =
+        document.getElementById(
+            "priority-filter"
+        ).value;
+
+
+    let filtered =
+        allReports.filter(
+            report => {
+
+                const statusMatch =
+                    !status ||
+                    report.status === status;
+
+
+                const wasteTypeMatch =
+                    !wasteType ||
+                    report.waste_type === wasteType;
+
+
+                const priorityMatch =
+                    !priority ||
+                    report.priority === priority;
+
+
+                return (
+                    statusMatch &&
+                    wasteTypeMatch &&
+                    priorityMatch
+                );
+
+            }
+        );
+
+
+    displayReports(filtered);
+
+}
+
+
+/* ============================================================
+   DISPLAY
+   ============================================================ */
+
+function displayReports(reports) {
+
+    const tbody =
+        document.getElementById(
+            "reports-table-body"
+        );
+
+
+    document.getElementById(
+        "report-count"
+    ).textContent =
+        `${reports.length} report${
+            reports.length === 1 ? "" : "s"
+        }`;
+
+
+    if (reports.length === 0) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="text-center
+                           text-muted
+                           py-5">
+
+                    <div class="fs-1">
+                        ♻️
+                    </div>
+
+                    <div class="fw-semibold mt-2">
+                        No reports found
+                    </div>
+
+                    <small>
+                        Try changing your filters
+                        or submit a new report.
+                    </small>
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        reports.map(
+            report => `
+
+                <tr>
+
+                    <td>
+                        #${report.id}
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            report.image
+                            ?
+                            `
+                            <img
+                                src="${report.image}"
+                                class="report-image"
+                                alt="Waste">
+                            `
+                            :
+                            "—"
+                        }
+
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            report.location || "—"
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatWasteType(
+                            report.waste_type
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatConfidence(
+                            report.ai_confidence
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatStatus(
+                            report.status
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatPriority(
+                            report.priority
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${formatDate(
+                            report.created_at
+                        )}
+                    </td>
+
+                </tr>
+
+            `
+        ).join("");
+
+}
+
+
+/* ============================================================
+   FORMAT WASTE TYPE
+   ============================================================ */
+
+function formatWasteType(type) {
+
+    if (!type) {
+
+        return "—";
+
+    }
+
+
+    return type
+        .replaceAll("_", " ")
+        .replace(
+            /\b\w/g,
+            character =>
+                character.toUpperCase()
+        );
+
+}
+
+
+/* ============================================================
+   FORMAT CONFIDENCE
+   ============================================================ */
+
+function formatConfidence(confidence) {
+
+    if (
+        confidence === null ||
+        confidence === undefined
+    ) {
+
+        return "—";
+
+    }
+
+
+    const percentage =
+        Number(confidence) * 100;
+
+
+    return `
+        ${percentage.toFixed(1)}%
+    `;
+
+}
+
+
+/* ============================================================
+   FORMAT STATUS
+   ============================================================ */
+
+function formatStatus(status) {
+
+    const statusMap = {
+
+        pending: {
+            text: "Pending",
+            class: "bg-warning text-dark"
+        },
+
+        in_progress: {
+            text: "In Progress",
+            class: "bg-info text-dark"
+        },
+
+        resolved: {
+            text: "Resolved",
+            class: "bg-success"
+        }
+
+    };
+
+
+    const item =
+        statusMap[status] || {
+
+            text: status || "Unknown",
+            class: "bg-secondary"
+
+        };
+
+
+    return `
+        <span
+            class="badge ${item.class}
+                   status-badge">
+
+            ${item.text}
+
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   FORMAT PRIORITY
+   ============================================================ */
+
+function formatPriority(priority) {
+
+    const priorityMap = {
+
+        low: {
+            text: "Low",
+            class: "bg-success"
+        },
+
+        medium: {
+            text: "Medium",
+            class: "bg-warning text-dark"
+        },
+
+        high: {
+            text: "High",
+            class: "bg-danger"
+        }
+
+    };
+
+
+    const item =
+        priorityMap[priority] || {
+
+            text: priority || "Unknown",
+            class: "bg-secondary"
+
+        };
+
+
+    return `
+        <span
+            class="badge ${item.class}">
+
+            ${item.text}
+
+        </span>
+    `;
+
+}
+
+
+/* ============================================================
+   FORMAT DATE
+   ============================================================ */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+
+        return "—";
+
+    }
+
+
+    return new Date(
+        dateString
+    ).toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   HTML ESCAPE
+   ============================================================ */
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value;
+
+    return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+document
+    .getElementById("logout-link")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "refresh_token"
+            );
+
+            localStorage.removeItem(
+                "username"
+            );
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+        }
+    );
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+if (accessToken) {
+
+    loadReports();
+
+}
+
+</script>
+
+{% endblock %}

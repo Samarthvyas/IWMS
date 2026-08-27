@@ -1,0 +1,1074 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Waste | IWMS{% endblock %}
+
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5f7f6;
+    }
+
+    .report-wrapper {
+        margin-top: -48px;
+        margin-left: -12px;
+        margin-right: -12px;
+        min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+        min-height: calc(100vh - 70px);
+        background: linear-gradient(
+            180deg,
+            #064d32,
+            #073d2b
+        );
+        color: white;
+    }
+
+    .sidebar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-section {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .profile-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        color: #146c43;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-link {
+        display: block;
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        padding: 12px 20px;
+        margin: 3px 10px;
+        border-radius: 7px;
+        transition: 0.2s;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        background-color: rgba(255,255,255,0.14);
+        color: white;
+    }
+
+    .report-content {
+        padding: 30px;
+    }
+
+    .report-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .image-preview-container {
+        width: 100%;
+        height: 260px;
+        border: 2px dashed #ced4da;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+
+    .image-preview-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .image-placeholder {
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .location-button {
+        margin-top: 10px;
+    }
+
+</style>
+
+
+<div class="report-wrapper">
+
+    <div class="row g-0">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <div class="col-lg-2">
+
+            <aside class="sidebar">
+
+                <div class="sidebar-brand">
+                    ♻️ IWMS
+                </div>
+
+
+                <!-- Profile -->
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        👤
+                    </div>
+
+                    <div class="fw-semibold"
+                         id="sidebar-username">
+                        Citizen
+                    </div>
+
+                    <small class="text-white-50">
+                        Citizen
+                    </small>
+
+                </div>
+
+
+                <!-- Navigation -->
+
+                <nav class="mt-3">
+
+                    <a href="{% url 'frontend_dashboard' %}"
+                       class="sidebar-link">
+
+                        🏠
+                        <span class="ms-2">
+                            Dashboard
+                        </span>
+
+                    </a>
+
+
+                    <a href="{% url 'frontend_report_waste' %}"
+                       class="sidebar-link active">
+
+                        ♻️
+                        <span class="ms-2">
+                            Report Waste
+                        </span>
+
+                    </a>
+
+
+                    <a href="#"
+                       class="sidebar-link">
+
+                        📋
+                        <span class="ms-2">
+                            My Reports
+                        </span>
+
+                    </a>
+
+
+                    <a href="#"
+                       class="sidebar-link">
+
+                        👤
+                        <span class="ms-2">
+                            Profile
+                        </span>
+
+                    </a>
+
+
+                    <a href="#"
+                       class="sidebar-link"
+                       id="logout-link">
+
+                        🚪
+                        <span class="ms-2">
+                            Logout
+                        </span>
+
+                    </a>
+
+                </nav>
+
+            </aside>
+
+        </div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <div class="col-lg-10">
+
+            <main class="report-content">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            mb-4">
+
+                    <div>
+
+                        <h4 class="fw-bold mb-1">
+                            Report New Waste
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            Upload an image and provide
+                            the waste location.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= MESSAGES ================= -->
+
+                <div id="message-container"></div>
+
+
+                <!-- ================= FORM CARD ================= -->
+
+                <div class="card report-card">
+
+                    <div class="card-body p-4">
+
+                        <form id="report-form">
+
+                            <div class="row g-4">
+
+                                <!-- ================= IMAGE ================= -->
+
+                                <div class="col-lg-6">
+
+                                    <label
+                                        for="waste-image"
+                                        class="form-label fw-semibold">
+
+                                        Upload Waste Image
+                                    </label>
+
+
+                                    <input
+                                        type="file"
+                                        class="form-control"
+                                        id="waste-image"
+                                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                                        required
+                                    >
+
+
+                                    <small class="text-muted">
+                                        Accepted formats:
+                                        JPG, JPEG, PNG
+                                    </small>
+
+
+                                    <div
+                                        class="image-preview-container mt-3"
+                                        id="image-preview-container">
+
+                                        <div
+                                            class="image-placeholder"
+                                            id="image-placeholder">
+
+                                            <div class="fs-1">
+                                                🖼️
+                                            </div>
+
+                                            <div>
+                                                Image preview
+                                                will appear here
+                                            </div>
+
+                                        </div>
+
+
+                                        <img
+                                            id="image-preview"
+                                            src=""
+                                            alt="Waste image preview"
+                                            style="display: none;"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ================= LOCATION ================= -->
+
+                                <div class="col-lg-6">
+
+                                    <label
+                                        for="location"
+                                        class="form-label fw-semibold">
+
+                                        Location / Address
+                                    </label>
+
+
+                                    <textarea
+                                        class="form-control"
+                                        id="location"
+                                        rows="3"
+                                        placeholder="Enter waste location/address"
+                                        required
+                                    ></textarea>
+
+
+                                    <div class="row mt-3">
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                for="latitude"
+                                                class="form-label fw-semibold">
+
+                                                Latitude
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                class="form-control"
+                                                id="latitude"
+                                                placeholder="e.g. 22.7196"
+                                                required
+                                            >
+
+                                        </div>
+
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                for="longitude"
+                                                class="form-label fw-semibold">
+
+                                                Longitude
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                class="form-control"
+                                                id="longitude"
+                                                placeholder="e.g. 75.8577"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-success location-button"
+                                        id="location-button">
+
+                                        📍 Get Current Location
+
+                                    </button>
+
+
+                                    <div
+                                        class="small text-muted mt-2"
+                                        id="location-message">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ================= SUBMIT ================= -->
+
+                            <hr class="my-4">
+
+
+                            <div class="d-flex
+                                        justify-content-end">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-success px-4"
+                                    id="submit-button">
+
+                                    Submit Report
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   AUTHENTICATION
+   ============================================================ */
+
+const accessToken =
+    localStorage.getItem("access_token");
+
+
+if (!accessToken) {
+
+    window.location.href =
+        "{% url 'frontend_login' %}";
+
+}
+
+
+/* ============================================================
+   USERNAME
+   ============================================================ */
+
+const savedUsername =
+    localStorage.getItem("username");
+
+
+if (savedUsername) {
+
+    document.getElementById(
+        "sidebar-username"
+    ).textContent = savedUsername;
+
+}
+
+
+/* ============================================================
+   IMAGE PREVIEW
+   ============================================================ */
+
+const imageInput =
+    document.getElementById("waste-image");
+
+const imagePreview =
+    document.getElementById("image-preview");
+
+const imagePlaceholder =
+    document.getElementById("image-placeholder");
+
+
+imageInput.addEventListener(
+    "change",
+    function() {
+
+        const file =
+            this.files[0];
+
+
+        if (!file) {
+
+            imagePreview.style.display =
+                "none";
+
+            imagePlaceholder.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        /*
+         * Frontend validation
+         */
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png"
+        ];
+
+
+        if (!allowedTypes.includes(file.type)) {
+
+            showMessage(
+                "Please select a JPG, JPEG or PNG image.",
+                "danger"
+            );
+
+            this.value = "";
+
+            return;
+
+        }
+
+
+        /*
+         * Preview image
+         */
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                imagePreview.src =
+                    event.target.result;
+
+                imagePreview.style.display =
+                    "block";
+
+                imagePlaceholder.style.display =
+                    "none";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+/* ============================================================
+   GET CURRENT LOCATION
+   ============================================================ */
+
+const locationButton =
+    document.getElementById(
+        "location-button"
+    );
+
+
+const locationMessage =
+    document.getElementById(
+        "location-message"
+    );
+
+
+locationButton.addEventListener(
+    "click",
+    function() {
+
+        if (!navigator.geolocation) {
+
+            locationMessage.textContent =
+                "Geolocation is not supported by your browser.";
+
+            return;
+
+        }
+
+
+        locationButton.disabled =
+            true;
+
+        locationButton.innerHTML = `
+            <span
+                class="spinner-border spinner-border-sm me-2">
+            </span>
+            Getting Location...
+        `;
+
+
+        locationMessage.textContent =
+            "Please allow location access in your browser.";
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                document.getElementById(
+                    "latitude"
+                ).value =
+                    latitude.toFixed(6);
+
+
+                document.getElementById(
+                    "longitude"
+                ).value =
+                    longitude.toFixed(6);
+
+
+                locationMessage.textContent =
+                    "Current location detected successfully.";
+
+
+                locationButton.disabled =
+                    false;
+
+                locationButton.innerHTML =
+                    "📍 Get Current Location";
+
+            },
+
+
+            function(error) {
+
+                console.error(error);
+
+
+                let message =
+                    "Unable to get your location.";
+
+
+                if (error.code === 1) {
+
+                    message =
+                        "Location permission was denied.";
+
+                }
+
+                else if (error.code === 2) {
+
+                    message =
+                        "Your location could not be determined.";
+
+                }
+
+                else if (error.code === 3) {
+
+                    message =
+                        "Location request timed out.";
+
+                }
+
+
+                locationMessage.textContent =
+                    message;
+
+
+                locationButton.disabled =
+                    false;
+
+                locationButton.innerHTML =
+                    "📍 Get Current Location";
+
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+
+        );
+
+    }
+);
+
+
+/* ============================================================
+   SUBMIT REPORT
+   ============================================================ */
+
+const reportForm =
+    document.getElementById(
+        "report-form"
+    );
+
+
+reportForm.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const imageFile =
+            document.getElementById(
+                "waste-image"
+            ).files[0];
+
+
+        const location =
+            document.getElementById(
+                "location"
+            ).value.trim();
+
+
+        const latitude =
+            document.getElementById(
+                "latitude"
+            ).value;
+
+
+        const longitude =
+            document.getElementById(
+                "longitude"
+            ).value;
+
+
+        /*
+         * Validate image
+         */
+
+        if (!imageFile) {
+
+            showMessage(
+                "Please select a waste image.",
+                "danger"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Validate location
+         */
+
+        if (!location) {
+
+            showMessage(
+                "Please enter the waste location.",
+                "danger"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Validate coordinates
+         */
+
+        if (!latitude || !longitude) {
+
+            showMessage(
+                "Please enter latitude and longitude or use the current location button.",
+                "danger"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Create FormData
+         */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            imageFile
+        );
+
+
+        formData.append(
+            "location",
+            location
+        );
+
+
+        formData.append(
+            "latitude",
+            latitude
+        );
+
+
+        formData.append(
+            "longitude",
+            longitude
+        );
+
+
+        /*
+         * Disable button
+         */
+
+        const submitButton =
+            document.getElementById(
+                "submit-button"
+            );
+
+
+        submitButton.disabled =
+            true;
+
+
+        submitButton.innerHTML = `
+            <span
+                class="spinner-border spinner-border-sm me-2">
+            </span>
+            Submitting...
+        `;
+
+
+        clearMessage();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/reports/create/",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken
+
+                        },
+
+                        body: formData
+
+                    }
+                );
+
+
+            /*
+             * Handle expired token
+             */
+
+            if (response.status === 401) {
+
+                localStorage.removeItem(
+                    "access_token"
+                );
+
+                localStorage.removeItem(
+                    "refresh_token"
+                );
+
+                localStorage.removeItem(
+                    "username"
+                );
+
+
+                window.location.href =
+                    "{% url 'frontend_login' %}";
+
+                return;
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            /*
+             * Successful report
+             */
+
+            if (response.ok) {
+
+                showMessage(
+                    "Waste report submitted successfully! Redirecting to dashboard...",
+                    "success"
+                );
+
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            "{% url 'frontend_dashboard' %}";
+
+                    },
+                    1500
+                );
+
+
+                return;
+
+            }
+
+
+            /*
+             * Backend validation error
+             */
+
+            let errorMessage =
+                "Unable to submit the report.";
+
+
+            if (data.image) {
+
+                errorMessage =
+                    data.image[0];
+
+            }
+
+            else if (data.location) {
+
+                errorMessage =
+                    data.location[0];
+
+            }
+
+            else if (data.latitude) {
+
+                errorMessage =
+                    data.latitude[0];
+
+            }
+
+            else if (data.longitude) {
+
+                errorMessage =
+                    data.longitude[0];
+
+            }
+
+            else if (data.detail) {
+
+                errorMessage =
+                    data.detail;
+
+            }
+
+
+            showMessage(
+                errorMessage,
+                "danger"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                "Unable to connect to the server. Please try again.",
+                "danger"
+            );
+
+        }
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.innerHTML =
+            "Submit Report";
+
+    }
+);
+
+
+/* ============================================================
+   SHOW MESSAGE
+   ============================================================ */
+
+function showMessage(
+    message,
+    type
+) {
+
+    document.getElementById(
+        "message-container"
+    ).innerHTML = `
+
+        <div
+            class="alert alert-${type}
+                   alert-dismissible fade show">
+
+            ${message}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   CLEAR MESSAGE
+   ============================================================ */
+
+function clearMessage() {
+
+    document.getElementById(
+        "message-container"
+    ).innerHTML = "";
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+document
+    .getElementById("logout-link")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "refresh_token"
+            );
+
+            localStorage.removeItem(
+                "username"
+            );
+
+
+            window.location.href =
+                "{% url 'frontend_login' %}";
+
+        }
+    );
+
+</script>
+
+{% endblock %}

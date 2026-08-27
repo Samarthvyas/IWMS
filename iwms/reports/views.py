@@ -43,17 +43,17 @@ class CreateReportView(generics.CreateAPIView):
 # User: View own reports
 class UserReportsView(generics.ListAPIView):
     serializer_class = WasteReportSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return WasteReport.objects.filter(user=self.request.user)
+        return WasteReport.objects.filter(user=self.request.user).order_by('-created_at')
 
 
 # Admin: View all reports
 class AllReportsView(generics.ListAPIView):
     queryset = WasteReport.objects.all()
     serializer_class = WasteReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 class UpdateReportStatusView(generics.UpdateAPIView):
     queryset = WasteReport.objects.all()
